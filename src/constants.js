@@ -1,0 +1,2 @@
+export const HEADER_IMG = 'https://static-00.iconduck.com/assets.00/chat-icon-2048x2048-i7er18st.png';
+export const BACKGROUND_IMG = 'https://t4.ftcdn.net/jpg/02/02/17/99/360_F_202179910_Uv0HNNaT1LklpUAwfC5eJY3QhGL2IkAc.jpg';
