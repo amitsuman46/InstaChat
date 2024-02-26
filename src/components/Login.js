@@ -2,15 +2,26 @@ import React, { useState } from "react";
 import Header from "./Header";
 import { BACKGROUND_IMG } from "../constants";
 import useValidateForm from "../hooks/useValidateForm";
+import firebase from "../firebase";
 
 const Login = () => {
   const [signIn, setSignIn] = useState(true);
   const { name, email, password, nameError, emailError, passwordError, validateForm, clearErrors } = useValidateForm(signIn);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted successfully");
+      try {
+        if (signIn) {
+          await firebase.auth().signInWithEmailAndPassword(email.current.value, password.current.value);
+          console.log("User signed in successfully");
+        } else {
+          await firebase.auth().createUserWithEmailAndPassword(email.current.value, password.current.value);
+          console.log("User signed up successfully");
+        }
+      } catch (error) {
+        console.error("Authentication failed:", error.message);
+      }
     } else {
       console.log("Form validation failed");
     }
