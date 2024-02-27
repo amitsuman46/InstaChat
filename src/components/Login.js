@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Header from "./Header";
 import { BACKGROUND_IMG } from "../constants";
 import useValidateForm from "../hooks/useValidateForm";
-import firebase from "../firebase";
-
+import { auth } from "../firebase";
+import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from 'firebase/auth';
 const Login = () => {
   const [signIn, setSignIn] = useState(true);
   const { name, email, password, nameError, emailError, passwordError, validateForm, clearErrors } = useValidateForm(signIn);
@@ -13,10 +13,10 @@ const Login = () => {
     if (validateForm()) {
       try {
         if (signIn) {
-          await firebase.auth().signInWithEmailAndPassword(email.current.value, password.current.value);
+          await signInWithEmailAndPassword(auth, email.current.value, password.current.value);
           console.log("User signed in successfully");
         } else {
-          await firebase.auth().createUserWithEmailAndPassword(email.current.value, password.current.value);
+          await createUserWithEmailAndPassword(auth,email.current.value, password.current.value);
           console.log("User signed up successfully");
         }
       } catch (error) {
@@ -56,7 +56,7 @@ const Login = () => {
               <input className="bg-slate-500 p-3 ml-12 mr-12 mb-6  rounded-lg text-white" ref={password} type="password" placeholder="Password" />
               {passwordError && <p className="text-red-500 ml-12 -mt-6 mb-2">{passwordError}</p>}
 
-              <button className="bg-purple-500 p-3 ml-12 mr-12 mb-6  rounded-lg text-white">Login</button>
+              <button className="bg-purple-500 p-3 ml-12 mr-12 mb-6  rounded-lg text-white hover:bg-purple-300 hover:text-black">{signIn ? "Log In" : "Sign Up"}</button>
             </form>
             <span className="m-9 text-white hover:text-red-700 cursor-pointer" onClick={handleSignUp}>
               {signIn ? " New to InstaChat? Click here to Sign-up" : "Already Registered? Login"}
