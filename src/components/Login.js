@@ -11,6 +11,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import { addUser } from "../utils/userSlice";
 import { useDispatch } from "react-redux";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  setDoc,
+  doc,
+} from "firebase/firestore";
+
 const Login = () => {
   const [signIn, setSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -56,7 +64,24 @@ const Login = () => {
             })
           );
           console.log("User signed up successfully");
-          navigate("/home");
+          const displayNameValue = await name && name.current ? name.current.value : "";
+          try {
+            const db = getFirestore();
+            const usersRef = collection(db, "users");
+
+            const userDocRef = doc(usersRef, auth.currentUser.uid);
+
+
+            await setDoc(userDocRef, {
+              displayName: displayNameValue,
+              email: userEmail,
+              // ... other user information ...
+            });
+            await navigate("/home");
+          } catch (error) {
+            console.error("Error storing user data:", error);
+          }
+          // navigate("/home");
         }
       } catch (error) {
         const errorCode = error.code;
