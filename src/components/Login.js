@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "./Header";
 import { BACKGROUND_IMG } from "../constants";
 import useValidateForm from "../hooks/useValidateForm";
-import { auth } from "../firebase";
+import { auth, database } from "../firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -11,13 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { addUser } from "../utils/userSlice";
 import { useDispatch } from "react-redux";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  setDoc,
-  doc,
-} from "firebase/firestore";
+import { ref, set } from "firebase/database";
 
 const Login = () => {
   const [signIn, setSignIn] = useState(true);
@@ -56,6 +50,7 @@ const Login = () => {
           const user = await userCredential.user;
           await updateProfile(user, { displayName: name.current.value });
           const { uid, email: userEmail, displayName } = auth.currentUser;
+          console.log(displayName);
           dispatch(
             addUser({
               uid: uid,
@@ -63,26 +58,24 @@ const Login = () => {
               displayName: displayName,
             })
           );
-          console.log("User signed up successfully");
-          const displayNameValue = await name && name.current ? name.current.value : "";
-          try {
-            const db = getFirestore();
-            const usersRef = collection(db, "users");
+          // Push UUID to Firebase Realtime Database
 
-            const userDocRef = doc(usersRef, auth.currentUser.uid);
-
-
-            await setDoc(userDocRef, {
-              displayName: displayNameValue,
-              email: userEmail,
-              // ... other user information ...
+          const userRef = await ref(database, "users/" + uid); // Replace with your identifier
+          await set(userRef, {
+            displayName: displayName,
+            email: userEmail,
+          })
+            .then(() => {
+              console.log("User data sent successfully!");
+            })
+            .catch((error) => {
+              console.error("Error writing data:", error);
             });
-            await navigate("/home");
-          } catch (error) {
-            console.error("Error storing user data:", error);
-          }
-          // navigate("/home");
+
+          console.log("User signed up successfully");
+          navigate("/home");
         }
+        
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;

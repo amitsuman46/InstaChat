@@ -51,7 +51,7 @@ const Header = () => {
         {user && 
           <div className="p-2 m-2 flex justify-between text-base ">
             <h2 className="text-purple-600 text-xl font-bold">{user?.displayName}</h2>
-            <button onClick={handleSignOut} className="font-bold text-red-700 hover:text-black">
+            <button onClick={handleSignOut} className="font-bold text-red-700 hover:text-white">
             (Sign Out)
           </button>
           </div>
