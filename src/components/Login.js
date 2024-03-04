@@ -60,7 +60,7 @@ const Login = () => {
           );
           // Push UUID to Firebase Realtime Database
 
-          const userRef = await ref(database, "users/" + uid); // Replace with your identifier
+          const userRef = await ref(database, "users/" + uid); 
           await set(userRef, {
             displayName: displayName,
             email: userEmail,

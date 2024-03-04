@@ -8,7 +8,7 @@ const Shimmer = () => (
   </div>
 );
 
-const AvailableUser = ({ userList }) => {
+const AvailableUser = ({ userList, onUserClick }) => {
   return (
     <div className="overflow-x-auto flex  gap-4">
       <div className="flex w-full">
@@ -16,7 +16,7 @@ const AvailableUser = ({ userList }) => {
           ? userList.map((user) => (
               <div
                 className="flex flex-col items-center p-4 m-4 w-[250px] h-60 border text-center border-lime-500 text-cyan-100 rounded-lg"
-                key={user.uid}
+                key={user.uid} onClick={() => onUserClick(user)}
               >
                 <img
                   className="h-[82%] w-[80%] object-cover rounded-full"

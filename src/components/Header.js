@@ -43,8 +43,8 @@ const Header = () => {
   return (
     <div className="flex w-screen bg-gradient-to-b from-black">
       <div className="p-2 mx-2 w-20 h-20 flex">
-        <img src={HEADER_IMG} alt="header-logo" />
-        <span className="text-white p-2 m-2 text-3xl">InstaChat</span>
+        <img className="my-1" src={HEADER_IMG} alt="header-logo" />
+        <span className="text-white p-2 m-2 text-2xl">InstaChat</span>
       </div>
       <div className="flex-grow" /> {/* This creates a flexible space to push the user display name to the right */}
       <div className="p-2 mx-2 text-white">
