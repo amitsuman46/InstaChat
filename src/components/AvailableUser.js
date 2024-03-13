@@ -1,35 +1,43 @@
 import React from "react";
+import Shimmer from "./Shimmer";
 
-const Shimmer = () => (
-  <div className="animate-pulse flex flex-col items-center p-4 m-4 w-[250px] h-60 border border-lime-500 rounded-lg">
-    <div className="rounded-full bg-gray-300 h-16 w-16 mb-2"></div>
-    <div className="bg-gray-300 h-8 w-20 mb-2"></div>
-    <div className="bg-gray-300 h-4 w-24"></div>
-  </div>
-);
-
-const AvailableUser = ({ userList, onUserClick }) => {
+const AvailableUser = ({ userList, onlineUsers, onUserClick }) => {
   return (
-    <div className="overflow-x-auto flex  gap-4">
-      <div className="flex w-full">
-        {userList.length > 0
-          ? userList.map((user) => (
+    <div className="overflow-hidden h-full"> 
+      <div className="overflow-y-auto flex flex-col  h-full">
+        <div className="flex-grow w-full ">
+          {userList.length > 0 ? (
+            userList.map((user) => (
+              <div key={user?.uid}>
               <div
-                className="flex flex-col items-center p-4 m-4 w-[250px] h-60 border text-center border-lime-500 text-cyan-100 rounded-lg"
-                key={user.uid} onClick={() => onUserClick(user)}
+                className="flex  w-full p-4 border border-gray-200 rounded-lg  hover:bg-slate-600 cursor-pointer"
+                key={user?.uid}
+                onClick={() => onUserClick(user)}
               >
+                <div>
                 <img
-                  className="h-[82%] w-[80%] object-cover rounded-full"
+                  className="h-16 w-16 object-cover rounded-full" 
                   src={user.photoURL}
                   alt="user-icon"
                 />
-                <h1 className="text-xl text-orange-500">{user.displayName}</h1>
-                <p className="text-sm text-sm overflow-hidden whitespace-nowrap w-full">{user.email}</p>
+                </div>
+                <div className="ml-10"> 
+                <h1 className="text-md font-medium text-white mt-2">{user.displayName}</h1>
+                <p className="text-sm text-gray-500">
+                  {onlineUsers.has(user.uid) ? (
+                    <span className="text-green-500">Online</span>
+                  ) : (
+                    <span className="text-red-500">Offline</span>
+                  )}
+                </p>
+                </div>
+              </div>
               </div>
             ))
-          : Array.from({ length: 8 }).map((_, index) => (
-              <Shimmer key={index} />
-            ))}
+          ) : (
+            Array.from({ length: 10 }).map((_, index) => <Shimmer key={index} />)
+          )}
+        </div>
       </div>
     </div>
   );

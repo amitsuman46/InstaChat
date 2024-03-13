@@ -51,12 +51,14 @@ const Login = () => {
           await updateProfile(user, { displayName: name.current.value });
           const { uid, email: userEmail, displayName } = auth.currentUser;
           console.log(displayName);
+          localStorage.setItem("UID",uid);
           dispatch(
             addUser({
               uid: uid,
               email: userEmail,
               displayName: displayName,
             })
+            
           );
           // Push UUID to Firebase Realtime Database
 

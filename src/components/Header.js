@@ -22,6 +22,7 @@ const Header = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const { uid, email, displayName, photoURL } = user;
+        localStorage.setItem("UID",uid);
         dispatch(
           addUser({
             uid: uid,
