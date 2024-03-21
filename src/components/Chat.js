@@ -1,27 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const Chat = ({ user, onSendMessage, socket }) => {
-  const [chatMessages, setChatMessages] = useState([]); // State for chat messages
+const Chat = ({ user, onSendMessage, socket, chatMessages, setChatMessages }) => {
+  // const [chatMessages, setChatMessages] = useState([]); // State for chat messages
   const messageInputRef = useRef(null); // Reference to message input
 
-  useEffect(() => {
-    // Receive messages from the server
-    socket.on("forwardmessage", (messageData) => {
-      if (messageData.recipientId === user.uid) {
-        setChatMessages((prevMessages) => [...prevMessages, messageData]);
-      }
-    });
+  // useEffect(() => {
+  //   // Receive messages from the server
+  //   socket.on("forwardmessage", (messageData) => {
+  //     if (messageData.recipientId === user.uid) {
+  //       setChatMessages((prevMessages) => [...prevMessages, messageData]);
+  //       console.log("Chat  received: ", messageData);
+  //     }
+  //   });
 
-    // Clean up the socket listener on component unmount
-    return () => {
-      socket.off("forwardmessage");
-    };
-  }, [socket, user.uid]);
+  //   // Clean up the socket listener on component unmount
+  //   return () => {
+  //     socket.off("forwardmessage");
+  //   };
+  // }, [socket, user.uid]);
 
   const sendMessage = () => {
     const message = messageInputRef.current.value.trim();
     if (message) {
-      onSendMessage(message); // Send message through parent component
+      onSendMessage(message);
+       // Send message through parent component
+       console.log("Sending message: ", message);
+      setChatMessages((prevMessages) => [...prevMessages, {content:message,isSent:true}]);
       messageInputRef.current.value = ""; // Clear input after sending
     }
   };
@@ -44,7 +48,7 @@ const Chat = ({ user, onSendMessage, socket }) => {
             <div
               key={index}
               className={`chat-message flex items-start mb-2 ${
-                message.isSent ? "justify-end" : "justify-start"
+                message.isSent===true ? "justify-start" : "justify-end"
               }`}
             >
               {message.isSent ? (

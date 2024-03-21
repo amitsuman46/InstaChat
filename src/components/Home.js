@@ -13,20 +13,50 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState(new Map());
   const user = useSelector((store) => store.user);
-  const socket = io("http://localhost:3001"); // Initialize socket connection
+  const [socket,setSocket] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]); // State for chat messages
 
-  useEffect(() => {
+
+  useEffect(() => { 
+    const socket = io("http://localhost:3001"); 
+    setSocket(socket);
     const userId = user?.uid || localStorage.getItem("UID");
     socket.emit("join", userId);
-    socket.on("updateOnlineUsers", (updatedOnlineUsers) => {
-      const entries = updatedOnlineUsers.map((userId) => [userId, true]);
-      setOnlineUsers(new Map(entries));
-    });
-
     return () => {
       socket.disconnect();
     };
   }, []);
+
+  useEffect(()=>{
+      if(!socket) return;
+    socket.on("updateOnlineUsers", (updatedOnlineUsers) => {
+    const entries = updatedOnlineUsers.map((userId) => [userId, true]);
+    setOnlineUsers(new Map(entries));
+    });
+
+    return ()=>{
+      socket.off("updateOnlineUsers");
+    }
+
+  },[socket]);
+
+  useEffect(()=>{
+
+    if(!socket) return;
+
+    socket.on('forwardmessage',(messageData)=>{
+      if (messageData.recipientId === user.uid) {
+        setChatMessages((prevMessages) => [...prevMessages, messageData]);
+        console.log("Chat  received: ", messageData);
+      }
+    })
+
+    return ()=>{
+      socket.off('forwardmessage');
+    }
+
+  },[socket])
+
 
   const fetchUsers = async () => {
     try {
@@ -85,6 +115,7 @@ const Home = () => {
               onSendMessage={(message) => {
                 const recipientSocketId = onlineUsers.get(selectedUser.uid);
                 if (recipientSocketId) {
+                  if(!socket) return;
                   socket.emit("message", {
                     content: message,
                     senderId: user.uid,
@@ -95,7 +126,9 @@ const Home = () => {
                   // You might want to display a message or store the message temporarily
                 }
               }}
-              socket={socket} // Pass socket connection as prop
+              socket={socket}
+              chatMessages={chatMessages}
+              setChatMessages={setChatMessages} // Pass socket connection as prop
             />
           </div>
         ) : (
